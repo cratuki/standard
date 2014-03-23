@@ -1,0 +1,40 @@
+#!/usr/bin/python
+
+import sys
+
+SWAPS = [ ('\xe2\x80\x98', "'")
+        , ('\xe2\x80\x99', "'")
+
+        , ('\xe2\x80\x9c', '"')
+        , ('\xe2\x80\x9d', '"')
+
+        # emdash
+        , ('\xe2\x80\x94', '--')
+
+        # elipse
+        , ('\xe2\x80\xa6', '...')
+        ]
+
+def read_file(fname):
+    f_ptr = open(fname)
+    data = f_ptr.read()
+    f_ptr.close()
+    print "Read %s"%fname
+    return data
+
+def write_file(fname, data):
+    f_ptr = open(fname, 'w+')
+    f_ptr.write(data)
+    f_ptr.close()
+    print "Wrote %s"%fname
+
+def main():
+    for fname in sys.argv[1:]:
+        data = read_file(fname)
+        for old, new in SWAPS:
+            data = new.join( data.split(old) )
+        write_file(fname, data)
+
+if __name__ == '__main__':
+    main()
+

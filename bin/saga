@@ -1,0 +1,133 @@
+#!/usr/bin/python
+#
+# Saga script. This creates an entry in the saga directory.
+#
+
+import getpass
+import optparse
+import os
+import datetime
+import socket
+import sys
+import time
+
+from optparse import OptionParser
+
+
+# --------------------------------------------------------
+#   fixed
+# --------------------------------------------------------
+USERNAME = getpass.getuser()
+# I didn't want the full domain in the hostname, just the
+# hostname itself.
+HOSTNAME = socket.gethostname().split('.')[0]
+
+
+# --------------------------------------------------------
+#   config
+# --------------------------------------------------------
+DIR_SAGA='/home/%s/saga'%USERNAME
+
+
+# --------------------------------------------------------
+#   utility functions
+# --------------------------------------------------------
+def awful_hack_letter_list():
+    lst = []
+    for i in xrange(97, 122+1):
+        a = chr(i)
+        for j in xrange(97, 122+1):
+            b = chr(j)
+            lst.append("%s%s"%(a, b))
+    return lst
+
+def determine_unique_filename(dir, words):
+    now = time.strftime("%Y%m%d")
+
+    lst_awful = awful_hack_letter_list()
+    idx_awful = 0
+
+    letters = lst_awful[idx_awful]
+
+    def is_current_prefix_used():
+        prefix = "%s.%s.%s.%s"%( now
+                               , HOSTNAME
+                               , USERNAME
+                               , letters
+                               )
+        lst = [f for f in os.listdir(dir)
+                       if f.startswith(prefix)
+                       ]
+        if 0 == len(lst):
+            return False
+        else:
+            return True
+
+    while is_current_prefix_used():
+        idx_awful += 1
+        letters = lst_awful[idx_awful]
+
+    return "%s.%s.%s.%s.%s"%(now, HOSTNAME, USERNAME, letters, words)
+
+def fatal(msg):
+    print >> sys.stderr, "[saga] FATAL: %s"%msg
+    print "aborting"
+    sys.exit(1)
+
+
+# --------------------------------------------------------
+#   alg
+# --------------------------------------------------------
+def main():
+    if not os.path.exists(DIR_SAGA):
+        fatal("No directory %s"%DIR_SAGA)
+
+    parser = OptionParser()
+    parser.add_option( '-t', '--dry-run'
+                     , action='store_true'
+                     , dest='dry_run'
+                     )
+    parser.add_option( '-z', '--echo_most_recent_only'
+                     , action='store_true'
+                     , dest='just_get_last'
+                     )
+    (options, args) = parser.parse_args()
+
+    if args:
+        lst_words = sys.argv[1:]
+        dot_words = '.'.join( [w for w in lst_words if not w.startswith('-')] )
+
+        saganame = determine_unique_filename(DIR_SAGA, dot_words)
+
+        if options.dry_run:
+            pass
+        else:
+            dir_name = os.sep.join( [DIR_SAGA, saganame] )
+            # gone for append here to be safe
+            os.mkdir(dir_name)
+
+        print os.sep.join( [DIR_SAGA, saganame] )
+    else:
+        filenames = sorted( [os.sep.join( [DIR_SAGA, fname] ) for fname
+                                                              in os.listdir(DIR_SAGA)
+                                                              ]
+                          #, reverse=True
+                          )
+        if not filenames:
+            print >> sys.stderr, "ERROR: Saga directory is empty."
+            print "aborting"
+            sys.exit(1)
+
+        if options.just_get_last:
+            print filenames[-1]
+        else:
+            print '\n'.join(filenames)
+
+
+# --------------------------------------------------------
+#   loader
+# --------------------------------------------------------
+if __name__ == '__main__':
+    main()
+
+
