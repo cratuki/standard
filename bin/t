@@ -1,27 +1,24 @@
 #!/bin/bash
-
 #
-# Modified TMUX start script from:
-#     http://forums.gentoo.org/viewtopic-t-836006-start-0.html
+# Convenience script for attaching to a default tmux session.
 #
-# Store it to `~/bin/tmx` and issue `chmod +x`.
+# Adapted from http://forums.gentoo.org/viewtopic-t-836006-start-0.html
+#
+# Motive:
+#   I have long-running tmux sessions on servers. With this, you can shell to
+#   a host, type 't', and have it make a best effort to come back to a single
+#   standard console.
 #
 
 # Works because bash automatically trims by assigning to variables and by 
 # passing arguments
 trim() { echo $1; }
 
-###if [[ -z "$1" ]]; then
-###    echo "Specify session name as the first argument"
-###    exit
-###fi
-
 if [[ -z "$1" ]]; then
     ARG="default"
 else
     ARG=$1
 fi
-
 
 # Only because I often issue `ls` to this script by accident
 if [[ "$ARG" == "ls" ]]; then
@@ -34,7 +31,9 @@ base_session="$ARG"
 tmux_nb=$(trim `tmux ls | grep "^$base_session" | wc -l`)
 if [[ "$tmux_nb" == "0" ]]; then
     echo "Launching tmux base session $base_session ..."
-    tmux new-session -s $base_session
+    # dash 2 is to force support for more colours
+    #tmux -2 new-session -s $base_session htop
+    tmux -2 new-session -s $base_session
 else
     # Make sure we are not already in a tmux session
     if [[ -z "$TMUX" ]]; then
@@ -49,11 +48,11 @@ else
         session_id=`date +%Y%m%d%H%M%S`
         # Create a new session (without attaching it) and link to base session 
         # to share windows
-        tmux new-session -d -t $base_session -s $session_id
+        tmux -2 new-session -d -t $base_session -s $session_id
         # Create a new window in that session
         #tmux new-window
         # Attach to the new session
-        tmux attach-session -t $session_id
+        tmux -2 attach-session -t $session_id
         # When we detach from it, kill the session
         tmux kill-session -t $session_id
     fi
