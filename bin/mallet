@@ -1,4 +1,10 @@
 #!/usr/bin/python
+#
+# Problem: when you copy text from windows to a unix console, you get all
+# kinds of odd characters in the text.
+#
+# What this is: an ill-considered, blunt instrument that sanitises such text
+#
 
 import sys
 
