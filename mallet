@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #
 # Problem: when you copy text from windows to a unix console, you get all
 # kinds of odd characters in the text.
@@ -25,14 +25,14 @@ def read_file(fname):
     f_ptr = open(fname)
     data = f_ptr.read()
     f_ptr.close()
-    print "Read %s"%fname
+    print("Read %s"%fname)
     return data
 
 def write_file(fname, data):
     f_ptr = open(fname, 'w+')
     f_ptr.write(data)
     f_ptr.close()
-    print "Wrote %s"%fname
+    print("Wrote %s"%fname)
 
 def main():
     for fname in sys.argv[1:]:

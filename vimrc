@@ -227,6 +227,20 @@ set writedelay=0
 " --------------------------------------------------------
 "   functions
 " --------------------------------------------------------
+function! SendEnter()
+    " expects watch to be running in window 2, pane 1
+    silent :!tmux select-pane -t 1
+    silent :!tmux send-keys "C-m"
+    silent :!tmux select-pand -t 2
+endfunction
+
+function! SendTerm()
+    " expects watch to be running in window 2, pane 1
+    silent :!tmux select-pane -t 1
+    silent :!tmux send-keys "C-c"
+    silent :!tmux select-pand -t 2
+endfunction
+
 function! ToggleSyntax()
     if exists("g:syntax_on")
        silent syntax off
@@ -278,9 +292,19 @@ nmap <leader>l :bn<CR>
 " make and run
 nmap <leader>m :make<CR>
 nmap <leader>, :!./app<CR>
-nmap <leader>. :make test<CR>
-nmap <leader>/ :!./run_tests<CR>
-nmap <leader><CR> :make debug<CR>
+nmap <leader>. :!./poke<CR>
+nmap <silent> <leader><CR> :call SendEnter()
+nmap <silent> <leader>\ :call SendTerm()
+
+" tmux
+nmap <leader>a    :execute 'silent !tmux send-keys -t left "vexec ./app"'<CR>
+nmap <leader>\    :execute 'silent !tmux send-keys -t left C-c'<CR>
+nmap <leader><CR> :execute 'silent !tmux send-keys -t left C-m'<CR>
+
+" plan
+nmap <leader>d /^:head<CR>
+nmap <leader>c /^:tail<CR>
+nmap <leader>v 0G
 
 nmap <leader>e :e<SPACE>
 nmap <leader>r :r<SPACE>
@@ -302,11 +326,10 @@ nmap <leader>; :
 map <leader>1 :!
 nmap <leader>2 :retab<CR>
 nmap <leader>@ :set expandtab!<CR>:set expandtab?<CR>
-nmap <leader>3 O#<CR><ESC>O#<CR><ESC>kO# <ESC>a
+nmap <leader>3 O#<ESC>O#<ESC>o# <ESC>a
 nmap <leader># O--<CR><ESC>O--<CR><ESC>kO-- <ESC>a
 nmap <leader>4 O--------------------------------------------------------<ESC>O--------------------------------------------------------<ESC>o<SPACE><SPACE><SPACE><SPACE>
 nmap <leader>5 :set ai<CR>O<ESC>a    =========================================<ESC>O<ESC>a    =========================================<ESC>O
-nmap <leader>% :set ai<CR>O<ESC>a    =========================================<ESC>O<ESC>a^   =========================================<ESC>O    :
 nmap <leader>6 O# --------------------------------------------------------<ESC>O# --------------------------------------------------------<ESC>o#   :<ESC>a
 nmap <leader>& O// --------------------------------------------------------<ESC>O// --------------------------------------------------------<ESC>o//  <ESC>a
 nmap <leader>7 O-------------------------------------------------------- */<ESC>O/* --------------------------------------------------------<ESC>o@<ESC>a

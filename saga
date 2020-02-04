@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #
 # Saga script. This creates an entry in the saga directory.
 #
@@ -12,31 +12,26 @@ import sys
 import time
 
 from optparse import OptionParser
-
-
-# --------------------------------------------------------
-#   fixed
-# --------------------------------------------------------
-USERNAME = getpass.getuser()
-# I didn't want the full domain in the hostname, just the
-# hostname itself.
-HOSTNAME = socket.gethostname().split('.')[0]
+from pathlib import Path
 
 
 # --------------------------------------------------------
 #   config
 # --------------------------------------------------------
-DIR_SAGA='/home/%s/saga'%USERNAME
+DIR_SAGA = os.path.join(Path.home(), 'saga')
 
 
 # --------------------------------------------------------
-#   utility functions
+#   alg
 # --------------------------------------------------------
+USERNAME = getpass.getuser()
+HOSTNAME = socket.gethostname().split('.')[0]
+
 def awful_hack_letter_list():
     lst = []
-    for i in xrange(97, 122+1):
+    for i in range(97, 122+1):
         a = chr(i)
-        for j in xrange(97, 122+1):
+        for j in range(97, 122+1):
             b = chr(j)
             lst.append("%s%s"%(a, b))
     return lst
@@ -70,14 +65,10 @@ def determine_unique_filename(dir, words):
     return "%s.%s.%s.%s.%s"%(now, HOSTNAME, USERNAME, letters, words)
 
 def fatal(msg):
-    print >> sys.stderr, "[saga] FATAL: %s"%msg
-    print "aborting"
+    print("[saga] FATAL: %s"%msg)
+    print("aborting")
     sys.exit(1)
 
-
-# --------------------------------------------------------
-#   alg
-# --------------------------------------------------------
 def main():
     if not os.path.exists(DIR_SAGA):
         fatal("No directory %s"%DIR_SAGA)
@@ -106,7 +97,7 @@ def main():
             # gone for append here to be safe
             os.mkdir(dir_name)
 
-        print os.sep.join( [DIR_SAGA, saganame] )
+        print(os.sep.join( [DIR_SAGA, saganame] ))
     else:
         filenames = sorted( [os.sep.join( [DIR_SAGA, fname] ) for fname
                                                               in os.listdir(DIR_SAGA)
@@ -114,20 +105,14 @@ def main():
                           #, reverse=True
                           )
         if not filenames:
-            print >> sys.stderr, "ERROR: Saga directory is empty."
-            print "aborting"
+            print("ERROR: Saga directory is empty.")
+            print("aborting")
             sys.exit(1)
 
         if options.just_get_last:
-            print filenames[-1]
+            print(filenames[-1])
         else:
-            print '\n'.join(filenames)
+            print('\n'.join(filenames))
 
-
-# --------------------------------------------------------
-#   loader
-# --------------------------------------------------------
 if __name__ == '__main__':
     main()
-
-
