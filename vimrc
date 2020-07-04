@@ -1,10 +1,4 @@
-" --------------------------------------------------------
-"   exhaustive list of vim options to blast out
-"   whatever braindead defaults the current
-"   distribution is trying to foist on me.
-" --------------------------------------------------------
 set t_Co=256
-colorscheme evening
 
 set ambiwidth=single
 set autoindent
@@ -19,9 +13,6 @@ set cdpath=,,
 set cedit=^F
 set charconvert=
 set cinoptions=
-"set cmdheight=1
-"set cmdwinheight=7
-"set columns=148
 set cscopepathcomp=0
 set cscopeprg=cscope
 set cscopequickfix=
@@ -32,7 +23,6 @@ set diffexpr=
 set diffopt=filler
 set display=
 set eadirection=both
-set encoding=latin1
 set endofline
 set equalalways
 set equalprg=
@@ -43,7 +33,6 @@ set fileformat=unix
 set filetype=
 set formatoptions=cq
 set formatprg=
-"set helpheight=20
 set helplang=
 set history=50
 set iconstring=
@@ -60,7 +49,6 @@ set keywordprg=man
 set langmap=
 set langmenu=
 set laststatus=1
-"set lines=51
 set listchars=eol:$
 set loadplugins
 set magic
@@ -145,12 +133,10 @@ set nottimeout
 set novisualbell
 set noweirdinvert
 set nowildmenu
-"set nowinfixheight
 set nowriteany
 set pastetoggle=
 set patchexpr=
 set patchmode=
-"set previewheight=12
 set printdevice=
 set printencoding=
 set printfont=courier
@@ -159,11 +145,9 @@ set remap
 set report=2
 set ruler
 set rulerformat=
-"set scroll=25
 set scrolljump=1
 set scrolloff=0
 set selectmode=
-set shell=/bin/bash
 set shellcmdflag=-c
 set shellquote=
 set shellxquote=
@@ -185,7 +169,6 @@ set tagbsearch
 set taglength=0
 set tagrelative
 set tagstack
-set term=vt100
 set termencoding=
 set textauto
 set textwidth=0
@@ -199,12 +182,11 @@ set ttybuiltin
 set ttyfast
 set ttymouse=
 set ttyscroll=999
-set ttytype=vt100
+set ttytype=ansi
 set undolevels=1000
 set updatecount=200
 set updatetime=4000
 set verbose=0
-"set viminfo='20,"50
 set virtualedit=
 set warn
 set whichwrap=b,s
@@ -212,8 +194,6 @@ set wildchar=<Tab>
 set wildcharm=0
 set wildignore=
 set wildmode=full
-"set winheight=1
-"set winminheight=1
 set winminwidth=1
 set winwidth=20
 set wrap
@@ -227,20 +207,6 @@ set writedelay=0
 " --------------------------------------------------------
 "   functions
 " --------------------------------------------------------
-function! SendEnter()
-    " expects watch to be running in window 2, pane 1
-    silent :!tmux select-pane -t 1
-    silent :!tmux send-keys "C-m"
-    silent :!tmux select-pand -t 2
-endfunction
-
-function! SendTerm()
-    " expects watch to be running in window 2, pane 1
-    silent :!tmux select-pane -t 1
-    silent :!tmux send-keys "C-c"
-    silent :!tmux select-pand -t 2
-endfunction
-
 function! ToggleSyntax()
     if exists("g:syntax_on")
        silent syntax off
@@ -272,9 +238,6 @@ let mapleader=" "
 nmap <leader>- :set noai<CR>
 nmap <leader>= :set ai<CR>
 "
-" Vertical split. Close with :q, not with buffer delete.
-nmap <leader>\ :vsplit<CR>
-"
 " Once you have a vsplit, you can switch between sides
 " using these shortcuts.
 nmap <leader>[ :wincmd h<CR>
@@ -291,21 +254,22 @@ nmap <leader>l :bn<CR>
 
 " make and run
 nmap <leader>m :make<CR>
-nmap <leader>, :!./app<CR>
-nmap <leader>. :!./poke<CR>
-nmap <silent> <leader><CR> :call SendEnter()
-nmap <silent> <leader>\ :call SendTerm()
+nmap <leader>? :put =strftime('@%Y%m%d %H%M')<CR>
+nmap <leader>. :put =strftime('%Y%m%d')<CR>
+nmap <leader>/ :put =strftime('@%H%M')<CR>
 
 " tmux
-nmap <leader>a    :execute 'silent !tmux send-keys -t left "vexec ./app"'<CR>
+nmap <leader>,    :execute 'silent !tmux send-keys -t left "vexec ./app" Enter'<CR>
 nmap <leader>\    :execute 'silent !tmux send-keys -t left C-c'<CR>
 nmap <leader><CR> :execute 'silent !tmux send-keys -t left C-m'<CR>
 
 " plan
+nmap <leader>f /^:plan<CR>
 nmap <leader>d /^:head<CR>
 nmap <leader>c /^:tail<CR>
-nmap <leader>v 0G
 
+nmap <leader>b :buffer<SPACE>
+nmap <leader>B :buffers<CR>
 nmap <leader>e :e<SPACE>
 nmap <leader>r :r<SPACE>
 nmap <leader>w :w<CR>
@@ -314,7 +278,6 @@ vmap <leader>p :!pwspace<CR>
 nmap <leader>P :%!pwspace<CR>
 nmap <leader>p :!pwd<CR>
 nmap <leader>q :q<CR>
-nmap <leader>x :qa!<CR>
 nmap <leader>s :call ToggleSyntax()<CR>
 
 nmap <leader>` :silent !retag<CR>
@@ -325,15 +288,17 @@ nmap <leader>y :set textwidth=0<CR>
 nmap <leader>; :
 map <leader>1 :!
 nmap <leader>2 :retab<CR>
-nmap <leader>@ :set expandtab!<CR>:set expandtab?<CR>
+nmap <leader>@ :set expandtab!<CR>:set expandtab?<CR>:set sw=2<CR>
 nmap <leader>3 O#<ESC>O#<ESC>o# <ESC>a
 nmap <leader># O--<CR><ESC>O--<CR><ESC>kO-- <ESC>a
 nmap <leader>4 O--------------------------------------------------------<ESC>O--------------------------------------------------------<ESC>o<SPACE><SPACE><SPACE><SPACE>
-nmap <leader>5 :set ai<CR>O<ESC>a    =========================================<ESC>O<ESC>a    =========================================<ESC>O
-nmap <leader>6 O# --------------------------------------------------------<ESC>O# --------------------------------------------------------<ESC>o#   :<ESC>a
+nmap <leader>5 :set ai<CR>O<ESC>a    =========================================<ESC>O<ESC>a    =========================================<ESC>o
+nmap <leader>% :set ai<CR>O<ESC>a    =========================================<ESC>O<ESC>a^   =========================================<ESC>O    
+nmap <leader>6 O# --------------------------------------------------------<ESC>O# --------------------------------------------------------<ESC>o#   <ESC>a
 nmap <leader>& O// --------------------------------------------------------<ESC>O// --------------------------------------------------------<ESC>o//  <ESC>a
-nmap <leader>7 O-------------------------------------------------------- */<ESC>O/* --------------------------------------------------------<ESC>o@<ESC>a
+nmap <leader>7 O-------------------------------------------------------- */<ESC>O/* --------------------------------------------------------<ESC>o:<ESC>a
 nmap <leader>8 O------------------------------------------------------ --]]<ESC>O--[[ ------------------------------------------------------<ESC>o   <ESC>a
+nmap <leader>9 O// ------------------------------------------------------------------------<ESC>O// ------------------------------------------------------------------------<ESC>o//  <ESC>a
 
 " This is useful for backing out in autoindent
 map <C-o> <BS><BS><BS><BS>
@@ -348,7 +313,6 @@ set background=dark
 if has("gui_running")
   set background=light
 endif
-set ttytype=ansi
 "
 " http://www.linusakesson.net/programming/syntaxhighlighting/
 sy on

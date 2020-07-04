@@ -20,7 +20,7 @@ else
     ARG=$1
 fi
 
-# Only because I often issue `ls` to this script by accident
+# I sometimes issue `ls` to this script instead of tmux by accident.
 if [[ "$ARG" == "ls" ]]; then
     tmux ls
     exit
@@ -57,4 +57,3 @@ else
         tmux kill-session -t $session_id
     fi
 fi
-

@@ -3,7 +3,7 @@
 # Problem: when you copy text from windows to a unix console, you get all
 # kinds of odd characters in the text.
 #
-# What this is: an ill-considered, blunt instrument that sanitises such text
+# This is a rough tool to sanitise such text towards 7-bit ascii.
 #
 
 import sys
@@ -15,7 +15,7 @@ SWAPS = [ ('\xe2\x80\x98', "'")
         , ('\xe2\x80\x9d', '"')
 
         # emdash
-        , ('\xe2\x80\x94', '--')
+        , ('\xe2\x80\x94', '-')
 
         # elipse
         , ('\xe2\x80\xa6', '...')
@@ -37,8 +37,21 @@ def write_file(fname, data):
 def main():
     for fname in sys.argv[1:]:
         data = read_file(fname)
+
+        # Replace common exceptions with new characters.
         for old, new in SWAPS:
             data = new.join( data.split(old) )
+
+        # Neutralise anything that is not 7-bit ascii
+        sb = []
+        for c in data:
+            if ord(c) < 32:
+                c = '|%s|'%(ord(c))
+            elif ord(c) >= 127:
+                c = '|%s|'%(ord(c))
+            sb.append(c)
+                
+        data = ''.join(data)
         write_file(fname, data)
 
 if __name__ == '__main__':
