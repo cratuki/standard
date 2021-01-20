@@ -1,0 +1,6 @@
+#!/bin/bash
+
+ROCKDIR=`dirname "$(readlink -f "$0")"`
+
+/usr/bin/urxvt -bg '#a02500' -fg '#eeeeee'
+

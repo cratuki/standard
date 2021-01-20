@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [[ "1" != "$#" ]]; then
+    echo "Usage:"
+    echo "  $0 app"
+    exit 1
+fi
+TARGET=$1
+
+pause() {
+    echo "[paused]"
+    read _X
+}
+
+main() {
+    while [[ "1" == "1" ]]; do
+        clear
+        $TARGET
+        pause
+    done
+}
+
+main
+
